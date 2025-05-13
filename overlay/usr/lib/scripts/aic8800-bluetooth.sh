@@ -1,7 +1,7 @@
 #!/bin/bash
 
 rfkill unblock all
-/usr/bin/hciattach -s 1500000 /dev/ttyS1 any 1500000 flow nosleep
+/usr/bin/hciattach -s 1500000 /dev/ttyS9 any 1500000 flow nosleep
 sleep 2
 
 while read -r; do
@@ -12,11 +12,11 @@ while read -r; do
             exit 0
             ;;
         "dev_open fail")
-            echo "Unable to open /dev/ttyS1. Is Bluetooth already up?"
+            echo "Unable to open /dev/ttyS9. Is Bluetooth already up?"
             exit 1
             ;;
     esac
-done < <(timeout 1 bt_test -s uart 1500000 "/dev/ttyS1")
+done < <(timeout 1 bt_test -s uart 1500000 "/dev/ttyS9")
 
 echo "Command timed out."
 exit 2

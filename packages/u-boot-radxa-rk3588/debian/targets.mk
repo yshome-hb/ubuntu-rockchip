@@ -139,3 +139,8 @@ u-boot-rockchip_platforms += orangepi-5-max-rk3588
 orangepi-5-max-rk3588_ddr := rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.16.bin
 orangepi-5-max-rk3588_bl31 := rk3588_bl31_v1.45.elf
 orangepi-5-max-rk3588_pkg := orangepi-5-max
+
+u-boot-rockchip_platforms += haibox-5a-rk3588s
+haibox-5a-rk3588s_ddr := rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.16.bin
+haibox-5a-rk3588s_bl31 := rk3588_bl31_v1.45.elf
+haibox-5a-rk3588s_pkg := haibox-5a
