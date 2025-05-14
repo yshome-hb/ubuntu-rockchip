@@ -14,3 +14,4 @@
 0014-board-rockchip-Add-the-ArmSoM-AIM7.patch
 0015-Revert-rockchip-resource-Add-avb-verify.patch
 0016-add-support-for-the-haibox-5a.patch
+0017-build-RKImage-add-partition-table.patch
