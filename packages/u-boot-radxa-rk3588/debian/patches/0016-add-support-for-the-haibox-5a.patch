@@ -85,12 +85,17 @@ index 0000000000..916d1b7c71
 +	u-boot,dm-pre-reloc;
 +};
 +
-+&u2phy3 {
++&usb2phy2_grf {
 +	status = "okay";
 +	u-boot,dm-pre-reloc;
 +};
 +
-+&u2phy3_host {
++&u2phy2 {
++	status = "okay";
++	u-boot,dm-pre-reloc;
++};
++
++&u2phy2_host {
 +	status = "okay";
 +	u-boot,dm-pre-reloc;
 +};
@@ -105,10 +110,19 @@ index 0000000000..916d1b7c71
 +	u-boot,dm-pre-reloc;
 +};
 +
-+&sfc {
-+	status = "disabled";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&fspim0_pins>;
++&usb2phy3_grf {
++	status = "okay";
++	u-boot,dm-pre-reloc;
++};
++
++&u2phy3 {
++	status = "okay";
++	u-boot,dm-pre-reloc;
++};
++
++&u2phy3_host {
++	status = "okay";
++	u-boot,dm-pre-reloc;
 +};
 +
 +&spi_nor {

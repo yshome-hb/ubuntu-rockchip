@@ -38,9 +38,12 @@ function config_image_hook__haibox-5a() {
         cp "${overlay}/usr/lib/systemd/system/aic8800-bluetooth.service" "${rootfs}/usr/lib/systemd/system/aic8800-bluetooth.service"
         chroot "${rootfs}" systemctl enable aic8800-bluetooth
 
+        # Install zh-hans language pack
+        chroot "${rootfs}" apt-get -y install language-pack-zh-hans
+
     cat << EOF | chroot "${rootfs}"
 export DEBIAN_FRONTEND=noninteractive
-export LANG=en_US.UTF-8
+export LANG=zh_CN.UTF-8
 
 /usr/sbin/oem-config-remove
 userdel --force --remove oem || true
@@ -49,19 +52,19 @@ systemctl disable oem-config.service || true
 systemctl disable oem-config.target || true
 rm -f /lib/systemd/system/oem-config.* || true
 
-sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
-echo "LANG=en_US.UTF-8" > /etc/default/locale
+sed -i 's/^# *\(zh_CN.UTF-8\)/\1/' /etc/locale.gen
+echo "LANG=zh_CN.UTF-8" > /etc/default/locale
 dpkg-reconfigure locales
 
 useradd haibox -m -u 1000 -s /bin/bash -G sudo,netdev,audio,video,disk,tty,users,games,dialout,plugdev,input,bluetooth,systemd-journal,render
 (
-echo "haibox"
-echo "haibox"
+echo "111111"
+echo "111111"
 ) | passwd "root" > /dev/null 2>&1
 
 (
-echo "haibox"
-echo "haibox"
+echo "111111"
+echo "111111"
 ) | passwd "haibox" > /dev/null 2>&1
 
 
@@ -70,8 +73,8 @@ sed -i -r \
     -e "s/^#[ ]*AutomaticLogin =.*\$/AutomaticLogin=haibox/" \
     /etc/gdm3/custom.conf
 
-ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime
-echo "Etc/UTC" >/etc/timezone
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+echo "Asia/Shanghai" >/etc/timezone
 echo "haibox-ubuntu" >/etc/hostname
 
 echo "127.0.0.1   localhost
