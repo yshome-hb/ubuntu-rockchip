@@ -41,6 +41,10 @@ function config_image_hook__haibox-5a() {
         # Install zh-hans language pack
         chroot "${rootfs}" apt-get -y install language-pack-zh-hans
 
+        cp -r ../packages/adb/rockchip-adbd.deb ${rootfs}/tmp
+        chroot "${rootfs}" dpkg -i /tmp/rockchip-adbd.deb
+        echo "BUILD_ID=$(date +'%Y-%m-%d')" >> "${rootfs}/etc/os-release"
+
     cat << EOF | chroot "${rootfs}"
 export DEBIAN_FRONTEND=noninteractive
 export LANG=zh_CN.UTF-8
