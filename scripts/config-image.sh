@@ -131,9 +131,13 @@ tar -xpJf "ubuntu-${RELASE_VERSION}-preinstalled-${FLAVOR}-arm64.rootfs.tar.xz" 
 # Mount the root filesystem
 setup_mountpoint $chroot_dir
 
+# Change to local mirror
+chroot $chroot_dir sed -i 's|http://ports.ubuntu.com|http://mirrors.aliyun.com/ubuntu-ports|g' /etc/apt/sources.list.d/ubuntu.sources
+chroot $chroot_dir sed -i 's|ppa.launchpad.net|launchpad.proxy.ustclug.org|g' /etc/apt/sources.list.d/*.list
+
 # Update packages
 chroot $chroot_dir apt-get update
-chroot $chroot_dir apt-get -y upgrade
+chroot $chroot_dir apt-get -y upgrade --allow-downgrades
     
 # Run config hook to handle board specific changes
 if [[ $(type -t config_image_hook__"${BOARD}") == function ]]; then
