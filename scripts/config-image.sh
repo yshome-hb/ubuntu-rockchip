@@ -133,7 +133,7 @@ setup_mountpoint $chroot_dir
 
 # Change to local mirror
 chroot $chroot_dir sed -i 's|http://ports.ubuntu.com|http://mirrors.aliyun.com/ubuntu-ports|g' /etc/apt/sources.list.d/ubuntu.sources
-chroot $chroot_dir sed -i 's|ppa.launchpad.net|launchpad.proxy.ustclug.org|g' /etc/apt/sources.list.d/*.list
+chroot $chroot_dir sed -i 's|http://ppa.launchpad.net|https://launchpad.proxy.ustclug.org|g' /etc/apt/sources.list.d/extra-ppas.list
 
 # Update packages
 chroot $chroot_dir apt-get update
