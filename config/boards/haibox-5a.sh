@@ -38,12 +38,15 @@ function config_image_hook__haibox-5a() {
         cp "${overlay}/usr/lib/systemd/system/aic8800-bluetooth.service" "${rootfs}/usr/lib/systemd/system/aic8800-bluetooth.service"
         chroot "${rootfs}" systemctl enable aic8800-bluetooth
 
-        # Install zh-hans language pack
-        chroot "${rootfs}" apt-get -y install language-pack-zh-hans
+        # Install wiring haibox package 
+        echo "BOARD=haibox-5a" > "${rootfs}/etc/haibox-release"
+        echo "BUILD_ID=$(date +'%Y-%m-%d')" >> "${rootfs}/etc/haibox-release"
 
         cp -r ../packages/adb/rockchip-adbd.deb ${rootfs}/tmp
         chroot "${rootfs}" dpkg -i /tmp/rockchip-adbd.deb
-        echo "BUILD_ID=$(date +'%Y-%m-%d')" >> "${rootfs}/etc/os-release"
+
+        # Install zh-hans language pack
+        chroot "${rootfs}" apt-get -y install language-pack-zh-hans
 
     cat << EOF | chroot "${rootfs}"
 export DEBIAN_FRONTEND=noninteractive

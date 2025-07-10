@@ -125,24 +125,32 @@ chroot_dir=rootfs
 overlay_dir=../overlay
 
 # Extract the compressed root filesystem
-rm -rf ${chroot_dir} && mkdir -p ${chroot_dir}
-tar -xpJf "ubuntu-${RELASE_VERSION}-preinstalled-${FLAVOR}-arm64.rootfs.tar.xz" -C ${chroot_dir}
+if [ ! -d ${chroot_dir} ]; then
+    mkdir -p ${chroot_dir}
+    tar -xpJf "ubuntu-${RELASE_VERSION}-preinstalled-${FLAVOR}-arm64.rootfs.tar.xz" -C ${chroot_dir}
+    export UPDATE_PKG=Y
+else
+    umount -lf ${chroot_dir}/dev/pts 2> /dev/null || true
+    umount -lf ${chroot_dir}/* 2> /dev/null || true
+fi
 
 # Mount the root filesystem
 setup_mountpoint $chroot_dir
 
-# Change to local mirror
-chroot $chroot_dir sed -i 's|http://ports.ubuntu.com|http://mirrors.aliyun.com/ubuntu-ports|g' /etc/apt/sources.list.d/ubuntu.sources
-chroot $chroot_dir sed -i 's|http://ppa.launchpad.net|https://launchpad.proxy.ustclug.org|g' /etc/apt/sources.list.d/extra-ppas.list
+if [ "${UPDATE_PKG}" == "Y" ]; then
+    # Change to local mirror
+    chroot $chroot_dir sed -i 's|http://ports.ubuntu.com|http://mirrors.aliyun.com/ubuntu-ports|g' /etc/apt/sources.list.d/ubuntu.sources
+    chroot $chroot_dir sed -i 's|http://ppa.launchpad.net|https://launchpad.proxy.ustclug.org|g' /etc/apt/sources.list.d/extra-ppas.list
 
-# Update packages
-chroot $chroot_dir apt-get update
-chroot $chroot_dir apt-get -y upgrade --allow-downgrades
+    # Update packages
+    chroot $chroot_dir apt-get update
+    chroot $chroot_dir apt-get -y upgrade
     
-# Run config hook to handle board specific changes
-if [[ $(type -t config_image_hook__"${BOARD}") == function ]]; then
-    config_image_hook__"${BOARD}" "${chroot_dir}" "${overlay_dir}" "${SUITE}"
-fi 
+    # Run config hook to handle board specific changes
+    if [[ $(type -t config_image_hook__"${BOARD}") == function ]]; then
+        config_image_hook__"${BOARD}" "${chroot_dir}" "${overlay_dir}" "${SUITE}"
+    fi
+fi
 
 # Download and install U-Boot
 if [[ ${LAUNCHPAD} == "Y" ]]; then
@@ -153,7 +161,7 @@ else
     chroot ${chroot_dir} apt-mark hold "$(echo "${uboot_package}" | sed -rn 's/(.*)_[[:digit:]].*/\1/p')"
 
     cp "${linux_image_package}" "${linux_headers_package}" "${linux_modules_package}" "${linux_buildinfo_package}" "${linux_rockchip_headers_package}" ${chroot_dir}/tmp/
-    chroot ${chroot_dir} /bin/bash -c "apt-get -y purge \$(dpkg --list | grep -Ei 'linux-image|linux-headers|linux-modules|linux-rockchip' | awk '{ print \$2 }')"
+    chroot ${chroot_dir} /bin/bash -c "apt-get -y --allow-change-held-packages purge \$(dpkg --list | grep -Ei 'linux-image|linux-headers|linux-modules|linux-rockchip' | awk '{ print \$2 }')"
     chroot ${chroot_dir} /bin/bash -c "dpkg -i /tmp/{${linux_image_package},${linux_headers_package},${linux_modules_package},${linux_buildinfo_package},${linux_rockchip_headers_package}}"
     chroot ${chroot_dir} apt-mark hold "$(echo "${linux_image_package}" | sed -rn 's/(.*)_[[:digit:]].*/\1/p')"
     chroot ${chroot_dir} apt-mark hold "$(echo "${linux_headers_package}" | sed -rn 's/(.*)_[[:digit:]].*/\1/p')"
@@ -174,6 +182,6 @@ chroot ${chroot_dir} apt-get -y autoremove
 teardown_mountpoint $chroot_dir
 
 # Compress the root filesystem and then build a disk image
-cd ${chroot_dir} && tar -cpf "../ubuntu-${RELASE_VERSION}-preinstalled-${FLAVOR}-arm64-${BOARD}.rootfs.tar" . && cd .. && rm -rf ${chroot_dir}
+cd ${chroot_dir} && tar -cpf "../ubuntu-${RELASE_VERSION}-preinstalled-${FLAVOR}-arm64-${BOARD}.rootfs.tar" . && cd ..
 ../scripts/build-image.sh "ubuntu-${RELASE_VERSION}-preinstalled-${FLAVOR}-arm64-${BOARD}.rootfs.tar"
 rm -f "ubuntu-${RELASE_VERSION}-preinstalled-${FLAVOR}-arm64-${BOARD}.rootfs.tar"

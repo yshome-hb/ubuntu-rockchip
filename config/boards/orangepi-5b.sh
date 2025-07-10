@@ -35,16 +35,16 @@ function config_image_hook__orangepi-5b() {
         chroot "${rootfs}" systemctl enable ap6275p-bluetooth
 
         # Enable USB 2.0 port
-        cp "${overlay}/usr/lib/systemd/system/enable-usb2.service" "${rootfs}/usr/lib/systemd/system/enable-usb2.service"
-        chroot "${rootfs}" systemctl --no-reload enable enable-usb2
+        # cp "${overlay}/usr/lib/systemd/system/enable-usb2.service" "${rootfs}/usr/lib/systemd/system/enable-usb2.service"
+        # chroot "${rootfs}" systemctl --no-reload enable enable-usb2
 
         # Install wiring orangepi package 
         chroot "${rootfs}" apt-get -y install wiringpi-opi libwiringpi2-opi libwiringpi-opi-dev
         echo "BOARD=orangepi5" > "${rootfs}/etc/orangepi-release"
+        echo "BUILD_ID=$(date +'%Y-%m-%d')" >> "${rootfs}/etc/orangepi-release"
 
         cp -r ../packages/adb/rockchip-adbd.deb ${rootfs}/tmp
         chroot "${rootfs}" dpkg -i /tmp/rockchip-adbd.deb
-        echo "BUILD_ID=$(date +'%Y-%m-%d')" >> "${rootfs}/etc/os-release"
 
     cat << EOF | chroot "${rootfs}"
 export DEBIAN_FRONTEND=noninteractive
