@@ -45,6 +45,9 @@ function config_image_hook__haibox-5a() {
         cp -r ../packages/adb/rockchip-adbd.deb ${rootfs}/tmp
         chroot "${rootfs}" dpkg -i /tmp/rockchip-adbd.deb
 
+        cp -r ../packages/wiring/wiringpi_3.16_arm64.deb ${rootfs}/tmp
+        chroot "${rootfs}" dpkg -i /tmp/wiringpi_3.16_arm64.deb
+
         # Install zh-hans language pack
         chroot "${rootfs}" apt-get -y install language-pack-zh-hans
 
